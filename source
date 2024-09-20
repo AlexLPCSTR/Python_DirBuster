@@ -1,0 +1,44 @@
+#Modules
+import requests
+
+#Lists, tuples
+L_Websites = [] #List that contains websites
+L_Storage = [] #List that contains Storage, files or dirs
+
+print("400, 401, etc. Inaccessible storage will be displayed but you can change that in the code at line #40")
+
+while True:
+
+    Path_To_UCF = input("Path to URL_File => ") #Path to the text file that contains websites, e.g: https://www.google.com/
+    try:
+        URL_Container_File=open(Path_To_UCF, "r") #Opens the file in "read-mode" and iterates through the lines, appends to L_Websites.
+        for URLs in URL_Container_File:
+                L_Websites.append(URLs)
+                L_Websites = [Remove_NewLine.replace("\n", "") for Remove_NewLine in L_Websites] #Removes "\n" that is created from above code due to creating "newlines".
+        print(L_Websites, "<Inside L_Websites")
+    except:
+         print("Path not found.")
+
+    Path_To_SCF = input("Path to Storage_File => ") #Path to the text file that contains dirs, subdirs and files, e.g: .php, .admin, admin, .htaccess
+    try:
+        Storage_Container_File=open(Path_To_SCF, "r")
+        for Storage in Storage_Container_File:
+            L_Storage.append(Storage)
+            L_Storage = [Remove_NewLine.replace("\n", "") for Remove_NewLine in L_Storage]
+        print(L_Storage, "<Inside L_Storage")
+    except:
+         print("Path not found.")
+
+    for Websites in L_Websites: #Iterates through the L_Websites list
+        for Storage in L_Storage: #Iterates through the L_Storage list
+            try:
+                Website = Websites+Storage #Variable "Website" appends the chosen website from L_Website and goes through each unit in storage until it is exhausted and then another website is chosen to go through the same procedure.
+                Web_Check = requests.get(Website)
+                if Web_Check.status_code <= 299: #If less than or equal to 299 then do not remove unit and add too L_Storage_Accessible. If there are multiple websites then L_Storage_Accessible will not be as helpful.
+                    print("Response Information:", Web_Check, Website)
+                elif Web_Check.status_code >= 300:
+                    print("Response Information:", Web_Check, Website) #If you don't want to see error codes then you can disable this with '#' and add 'continue' below.
+            except:
+                 print(Website, Storage, "ERROR: Possible typo. Makes sure that the URL contains the last slash, example: https://www.google.com/<- This slash.")
+                 break
+    pass
